@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -54,7 +55,10 @@ func sumTransaction(transact []transaction) string {
 	var temp int64
 	for _, v := range transact {
 		s := v.Amount
-		i, _ := strconv.ParseInt(s, 10, 64)
+		i, err := strconv.ParseInt(s, 10, 64)
+		if err != nil {
+			log.Fatal(err)
+		}
 		temp += i
 
 	}
@@ -84,8 +88,6 @@ func avgTransaction(transact []transaction) int64 {
 func postTransactions(c *gin.Context) {
 	var newTransaction transaction
 
-	// Call BindJSON to bind the received JSON to
-	// newAlbum.
 	if err := c.BindJSON(&newTransaction); err != nil {
 		return
 	}
@@ -97,7 +99,6 @@ func postTransactions(c *gin.Context) {
 		return
 	}
 
-	// Add the new album to the slice.
 	transactions = append(transactions, newTransaction)
 	c.IndentedJSON(http.StatusCreated, newTransaction)
 }
